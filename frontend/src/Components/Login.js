@@ -28,17 +28,16 @@ export default function Login() {
     }
 
     try {
+      setLoading(true);
       const res = await axios.post("http://localhost:3001/login", {
         username: username,
         password: password,
       });
 
       if (res.data === "success") {
-        setLoading(true);
-        setTimeout(() => {
-          setLoading(false);
-          navigate("/home");
-        }, 2000);
+        await new Promise((resolve) => setTimeout(resolve, 2000));
+        setLoading(false);
+        navigate("/home");
       } else {
         setLoading(false);
         console.log(res);
