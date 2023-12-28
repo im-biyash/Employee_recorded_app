@@ -65,7 +65,7 @@ export default function Login() {
   return (
     <>
       {loading && (
-        <div className="absolute inset-0 flex items-center justify-center h-screen bg-gray-800 bg-opacity-50">
+        <div className="absolute inset-0 z-10 flex items-center justify-center h-screen bg-gray-800 bg-opacity-50">
           <RingLoader color="#36D7B7" loading={loading} size={50} />
         </div>
       )}
