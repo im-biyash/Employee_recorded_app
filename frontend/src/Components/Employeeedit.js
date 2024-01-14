@@ -8,7 +8,7 @@ function Employeeedit() {
   const { id } = useParams();
   const [employeeData, setEmployeeData] = useState(null);
   const [updatedCountry, setUpdatedCountry] = useState("");
-  const [updatedPosition, setUpdatedPosition] = useState("");
+  const [updatedPost, setUpdatedPost] = useState("");
   const [updatedWage, setUpdatedWage] = useState("");
   const navigate = useNavigate();
   useEffect(() => {
@@ -18,7 +18,7 @@ function Employeeedit() {
         console.log(response);
         setEmployeeData(response.data);
         setUpdatedCountry(response.data.country);
-        setUpdatedPosition(response.data.position);
+        setUpdatedPost(response.data.post);
         setUpdatedWage(response.data.wage);
       })
       .catch((error) => {
@@ -30,19 +30,21 @@ function Employeeedit() {
     axios
       .put(`http://localhost:3001/update/${id}`, {
         country: updatedCountry,
-        position: updatedPosition,
+        post: updatedPost,
         wage: updatedWage,
       })
       .then((response) => {
         console.log("Employee updated successfully", response);
-        // Optionally, you can update the state or perform other actions after a successful update
+        // Update the local state with the new data, including existing position value
+      setEmployeeData(response.data);
+      console.log(response.data);
       })
       .catch((error) => {
         console.error("Error updating employee", error);
       });
     navigate("/employee");
   };
-
+  
   return (
     <div className="bg-[#0a192f] min-h-screen">
       <Navbar />
@@ -97,15 +99,15 @@ function Employeeedit() {
                 htmlFor="position"
                 className="block text-white text-sm font-bold mb-2"
               >
-                Position
+                Post
               </label>
               <input
                 className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                 id="position"
                 type="text"
                 placeholder="Enter position"
-                value={updatedPosition}
-                onChange={(e) => setUpdatedPosition(e.target.value)}
+                value={updatedPost}
+                onChange={(e) => setUpdatedPost(e.target.value)}
               />
             </div>
 

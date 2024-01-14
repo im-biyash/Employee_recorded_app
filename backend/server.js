@@ -47,56 +47,71 @@ app.post("/login", (req, res) => {
 // ... (existing code)
 
 app.post("/create", upload.single("photo"), (req, res) => {
-  const { name, employeeid, email, date, country, position, wage } = req.body;
-  const photo = req.file; 
+  const { name, employeeid, email, date, country,post, position, wage } = req.body;
+  const photo = req.file;
   console.log(req.body);
-  console.log(req.file); // Retrieve the file from req.file
+  console.log(req.file);
 
   // Ensure that the file is provided
   if (!photo) {
     return res.status(400).json({ error: "No file provided" });
   }
-  if(!["image/jpeg","image/png","image/gif"].includes(photo.mimetype)){
-    return res.status(400).json({ error: "inavlid file type" });
+  if (!["image/jpeg", "image/png", "image/gif"].includes(photo.mimetype)) {
+    return res.status(400).json({ error: "Invalid file type" });
   }
 
-  // check if employeeid already exists
+  // Check if employeeid already exists
   db.query(
     "SELECT * FROM datas WHERE employeeid = ?",
-    employeeid,
+    [employeeid],
     (err, result) => {
       if (err) {
         console.error(err);
-        return res.status(500).json({ error: "An error occurred while fetching employee data." });
+        return res.status(500).json({
+          error: "An error occurred while fetching employee data.",
+        });
       } else if (result.length > 0) {
-        return res.status(400).json({ error: "Employee already exists" });
+        return res
+          .status(400)
+          .json({ error: "Employee already exists" });
       } else {
-        console.log("Employee does not exist");
-      }
-    }
-  );
+        // Employee does not exist, proceed with the insert
+        const sql =
+          "INSERT INTO datas (name, employeeid, email, date, country, post, position, wage, photo) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
-
-  // Set the mimetype to "image/jpeg"
-  const sql =
-    "INSERT INTO datas (name, employeeid, email, date, country, position, wage, photo) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
-
-  db.query(
-    sql,
-    [name, employeeid, email, date, country, position, wage, photo.filename],
-    (err, result) => {
-      if (err) {
-        console.error("Error inserting data into the database: " + err.message);
-        return res.status(500).json("Error");
-      } else {
-        console.log(result);
-        console.log("Data inserted successfully");
-        return res.status(200).json({ result: "Employee created successfully." });
+        db.query(
+          sql,
+          [
+            name,
+            employeeid,
+            email,
+            date,
+            country,
+            post,
+            position,
+            wage,
+            photo.filename,
+          ],
+          (err, result) => {
+            if (err) {
+              console.error(
+                "Error inserting data into the database: " +
+                  err.message
+              );
+              return res.status(500).json("Error");
+            } else {
+              console.log(result);
+              console.log("Data inserted successfully");
+              return res.status(200).json({
+                result: "Employee created successfully.",
+              });
+            }
+          }
+        );
       }
     }
   );
 });
-
 
 
 // Serve uploaded files statically
@@ -116,12 +131,12 @@ app.get("/employees", (req, res) => {
 
 app.put("/update/:id", (req, res) => {
   const id = parseInt(req.params.id);
-  const { country, position, wage } = req.body;
+  const { country, post, wage } = req.body;
 
   const sql =
-    "UPDATE datas SET country = ?, position = ?, wage = ? WHERE employeeid = ?";
+    "UPDATE datas SET country = ?, post = ?, wage = ? WHERE employeeid = ?";
 
-  db.query(sql, [country, position, wage, id], (err, result) => {
+  db.query(sql, [country, post, wage, id], (err, result) => {
     if (err) {
       console.error("Error updating data in the database: " + err.message);
       return res.status(500).json("Error");
@@ -182,7 +197,22 @@ app.delete("/delete/:employeeid", (req, res) => {
     }
   });
 });
+// ... (existing code)
 
+app.get("/employeeChartData", (req, res) => {
+  const sql = "SELECT position, COUNT(*) as count FROM datas GROUP BY position";
+  
+  db.query(sql, (err, result) => {
+    if (err) {
+      console.error("Error fetching chart data from database:", err.message);
+      res.status(500).json({ error: "Internal Server Error" });
+    } else {
+      res.json(result);
+    }
+  });
+});
+
+// ... (existing code)
 
 
 app.listen(3001, () => {

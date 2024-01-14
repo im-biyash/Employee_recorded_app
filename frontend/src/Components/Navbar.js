@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import { RingLoader } from "react-spinners";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faSun } from "@fortawesome/free-solid-svg-icons";
 
 export default function Navbar() {
   const navigate = useNavigate();
@@ -11,9 +13,9 @@ export default function Navbar() {
   const handleLogout = () => {
     setLoading(true);
     setTimeout(() => {
-      setLoading(false);
+      // setLoading();
       navigate("/");
-    }, 1000); // Set loading state to false after navigation
+    }, 2000); // Set loading state to false after navigation
   };
 
   return (
@@ -30,11 +32,15 @@ export default function Navbar() {
             <Link to="/home"> Home </Link>
           </li>
           <li className="hover:bg-slate-700 transition-all duration-300 p-2 rounded-md">
-            <Link to="/about"> About</Link>
+            <Link to="/about"> Add employee</Link>
           </li>
           <li className="hover:bg-slate-700 transition-all duration-300 p-2 rounded-md">
             <Link to="/employee"> Employee </Link>
           </li>
+          <div>
+
+          <FontAwesomeIcon icon="fa-solid fa-sun" />
+          </div>
           <div className="relative p-2 left-[700px]">
             <button
               className="inline-block px-2 py-2 text-white border-white border-1 rounded-2xl bg-slate-600 hover:bg-slate-700 transition-all duration-300"

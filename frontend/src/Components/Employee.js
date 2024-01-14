@@ -6,20 +6,26 @@ import Navbar from "./Navbar";
 export default function Employees() {
   const [employeeList, setEmployeeList] = useState([]);
   const [searchInput, setSearchInput] = useState("");
-  const [sortingOption, setSortingOption] = useState("");
+  const [sortingOption, setSortingOption] = useState("name"); // Set default sorting to "name"
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedEmployee, setSelectedEmployee] = useState(null);
-  const [error, setError] = useState("");
-  useEffect(() => {
-    axios
-      .get("http://localhost:3001/employees")
-      .then((response) => {
-        setEmployeeList(response.data);
-      })
-      .catch((error) => {
-        console.error("Error in Axios request:", error);
-      });
-  }, []);
+  const [selectedPosition, setSelectedPosition] = useState("");
+
+useEffect(() =>{
+  const fetchdata = async ()=>{
+    try{
+      const result = await axios.get("http://localhost:3001/employees");
+      setEmployeeList(result.data);
+    }
+    catch(error){
+      
+    console.log("error in getting daa from backend", error);
+
+    }
+  };
+  fetchdata();
+}, [])
+
 
   const sortEmployeeList = () => {
     if (sortingOption === "name") {
@@ -41,9 +47,12 @@ export default function Employees() {
 
   const updateFilteredList = () => {
     return employeeList.filter((employee) => {
-      return employee.name.toLowerCase().includes(searchInput.toLowerCase());
+      const nameMatches = employee.name.toLowerCase().includes(searchInput.toLowerCase());
+      const positionMatches = selectedPosition ? employee.position.toLowerCase() === selectedPosition.toLowerCase() : true;
+      return nameMatches && positionMatches;
     });
   };
+  
 
   const deleteEmployee = (employeeid) => {
     axios
@@ -119,6 +128,29 @@ export default function Employees() {
             <option value="wages">Wages</option>
             <option value="date">Hire date</option>
           </select>
+          <div>
+
+          <label
+            htmlFor="sorting option"
+            className="text-white relative right-[300px]"
+          >
+            Position
+          </label>
+          <select
+            className=" relative right-[290px]  border-black border-2 bg-gray-100"
+            name="sortingOption"
+            id="sortingOption"
+            value={selectedPosition}
+            onChange={(e) => setSelectedPosition(e.target.value)}
+          >
+            <option value="">All</option>
+            <option value="intern">intern</option>
+            <option value="junior">junior</option>
+            <option value="mid-level">mid-level</option>
+            <option value="senior">senior</option>
+          </select>
+          </div>
+
           <div className="buttons p-3 mr-4 px-2 ">
             <button
               className=" border-2 rounded-2xl p-2 bg-green-400"
@@ -137,6 +169,7 @@ export default function Employees() {
               <th>Email</th>
               <th>Hire Date</th>
               <th>Country</th>
+              <th>Post</th>
               <th>Position</th>
               <th>Salary</th>
               <th className="print:hidden">Actions</th>
@@ -168,6 +201,9 @@ export default function Employees() {
                 </td>
                 <td className="px-2 py-1 text-white print:text-black  font-medium">
                   {val.country}
+                </td>
+                <td className="px-2 py-1 text-white print:text-black  font-medium">
+                  {val.post}
                 </td>
                 <td className="px-2 py-1 text-white print:text-black  font-medium">
                   {val.position}
@@ -212,6 +248,7 @@ export default function Employees() {
           alt={selectedEmployee.name}
           className="w-[250px] h-[250px] rounded-3xl"
         />
+        <h1 className="text-white text-2xl p-2 ml-3 mt-4">{selectedEmployee.name}</h1>
       </div>
       <div className="p-3 mb-9 text-white font-serif text-left w-[50%]">
         <div className="flex mb-3 p-1 border-b border-gray-500">
@@ -233,6 +270,10 @@ export default function Employees() {
         <div className="flex mb-3 p-1 border-b border-gray-500">
           <label className="mr-2 font-bold">Country:</label>
           <p>{selectedEmployee.country}</p>
+        </div>
+        <div className="flex mb-3 p-1 border-b border-gray-500">
+          <label className="mr-2 font-bold">Post:</label>
+          <p>{selectedEmployee.post}</p>
         </div>
         <div className="flex mb-3 p-1 border-b border-gray-500">
           <label className="mr-2 font-bold">Position:</label>
@@ -259,8 +300,6 @@ export default function Employees() {
     </button>
   </div>
 )}
-
-
     </div>
   );
 }
