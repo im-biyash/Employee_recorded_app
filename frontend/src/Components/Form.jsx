@@ -4,12 +4,13 @@
 import React, { useState } from "react";
 import axios from "axios";
 import Navbar from "./Navbar";
-import logout from "../Assets/logout.png";
+
 import { useNavigate } from "react-router-dom";
-export default function About() {
+export default function Form() {
   const [name, setName] = useState("");
   const [employeeid, setEmployeeid] = useState("");
   const [email, setEmail] = useState("");
+  const [phone, setPhone] = useState("");
   const [date, setDate] = useState("");
   const [country, setCountry] = useState("");
   const [position, setPosition] = useState("");
@@ -26,6 +27,7 @@ export default function About() {
       !name ||
       !employeeid ||
       !email ||
+      !phone ||
       !date ||
       !country ||
       !post ||
@@ -44,6 +46,7 @@ export default function About() {
     formData.append("name", name);
     formData.append("employeeid", employeeid);
     formData.append("email", email);
+    formData.append("phone", phone);
     formData.append("date", date);
     formData.append("country", country);
     formData.append("post", post); // Corrected line
@@ -58,7 +61,7 @@ export default function About() {
       event.target.reset();
       setDate("");
     } catch (error) {
-      console.error("Error:", error.response.data.error);
+      // console.error("Error:", error.response.data.error);
 
       // Check if the error is due to an existing employee ID
       if (error.response.data.error === "Employee already exists") {
@@ -70,10 +73,7 @@ export default function About() {
     }
   };
 
-  const navigate = useNavigate();
-  const logoutHandler = () => {
-    navigate("/");
-  };
+ 
   return (
     <>
       <Navbar />
@@ -88,7 +88,7 @@ export default function About() {
           >
             <div className="mb-2">
               <label htmlFor="name" className="block text-sm  mb-2 text-white ">
-                
+              Name:   
               </label>
               <input
                 required
@@ -134,6 +134,23 @@ export default function About() {
                 placeholder="Enter email"
                 onChange={(e) => {
                   setEmail(e.target.value);
+                }}
+              />
+            </div>
+            <div className="mb-2">
+              <label
+                htmlFor="email"
+                className="block text-white text-sm font-bold mb-2"
+              >
+               Phone
+              </label>
+              <input
+                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                id="phone"
+                type="number"
+                placeholder="Enter contact number"
+                onChange={(e) => {
+                  setPhone(e.target.value);
                 }}
               />
             </div>

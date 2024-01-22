@@ -17,42 +17,44 @@ export default function Login() {
   const [passwordError, setPasswordError] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const handleLogin = async () => {
-    if (username === "") {
-      setUsernameError("Username is required gggdgdfgerg4ggwgw");
-    } else {
-      setUsernameError("");
-    }
-    if (password === "") {
-      setPasswordError("Password is required");
-      return;
-    }
+ const handleLogin = async () => {
+  if (username === "") {
+    setUsernameError("Username is required");
+   
+  } 
+  if (password === "") {
+    setPasswordError("Password is required");
+    return;
+  }
 
-    try {
-      const res = await axios.post("http://localhost:3001/login", {
+  try {
+    const res = await axios.post("http://localhost:3001/login", {
+      
         username: username,
         password: password,
-      });
+   
+    });
 
-      if (res.data === "success") {
-        setLoading(true);
-        setTimeout(() => {
-          setLoading(false);
-          navigate("/home");
-        }, 2000);
-      } else {
-        console.log(res);
-        alert("You are not an admin");
-      }
-    } catch (error) {
-      console.error("Error while logging in:", error);
-      alert("An error occurred during login. Please try again.");
-      setLoading(false);
+    if (res.data === "success") {
+      setLoading(true);
+      setTimeout(() => {
+        setLoading(false);
+        navigate("/home");
+      }, 2000);
+    } else {
+      console.log(res);
+      alert("You are not an admin");
     }
-    console.log("hey")
-  };
+  } catch (error) {
+    console.error("Error while logging in:", error);
+    alert("An error occurred during login. Please try again.");
+    setLoading(false);
+  }
+  console.log("hey");
+};
 
   const handleUsernamechange = (e) => {
+    console.log(e.target.value);
     setUsername(e.target.value);
     setUsernameError(""); // Clear the error message
   };
@@ -65,15 +67,15 @@ export default function Login() {
   return (
     <>
       <div className="min-h-screen bg-[#0a192f]">
-        <div className="flex items-center justify-center ">
-          <h1 className="text-bold text-4xl font-mono font-bold italic text-white relative top-[50px] left-[60px] items-center mb-10">
+        <div className="flex  items-center justify-center ">          
+          <h1 className="text-bold text-4xl font-mono font-bold italic relative top-[40px]  text-white  items-center mb-10">
             Employee Recorder Application
           </h1>
         </div>
         {loading && (
           // Display ring loader only when loading state is true
           <div className="flex justify-center items-center h-screen">
-            <RingLoader color="#36d68f" size={100} speedMultiplier={1} />
+            <RingLoader color="#36d68f" size={200} speedMultiplier={1} />
           </div>
         )}
         <div className="flex items-center justify-center mt-6  ">

@@ -36,19 +36,19 @@ function Employeeedit() {
       .then((response) => {
         console.log("Employee updated successfully", response);
         // Update the local state with the new data, including existing position value
-      setEmployeeData(response.data);
-      console.log(response.data);
+        setEmployeeData(response.data);
+        console.log(response.data);
       })
       .catch((error) => {
         console.error("Error updating employee", error);
       });
     navigate("/employee");
   };
-  
+
   return (
     <div className="bg-[#0a192f] min-h-screen">
       <Navbar />
-      {/* <h1 className="text-red-600">Edit Employee page {id}</h1> */}
+
       {employeeData && (
         <div className="p-2 max-w-md mx-auto bg-[#0a192f]">
           <div className="">

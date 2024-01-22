@@ -19,11 +19,12 @@ useEffect(() =>{
     }
     catch(error){
       
-    console.log("error in getting daa from backend", error);
-
+      console.log("error in getting daa from backend", error);
+      
     }
   };
   fetchdata();
+  
 }, [])
 
 
@@ -81,12 +82,10 @@ useEffect(() =>{
   const printEmployeeList = () => {
     window.print();
   };
-  const printIndividualRecord = () => {
-    window.print();
-  };
+
   const handleSortingChange = (event) => {
     setSortingOption(event.target.value);
-    sortEmployeeList();
+    sortEmployeeList(); 
   };
 
   useEffect(() => {
@@ -167,6 +166,7 @@ useEffect(() =>{
               <th>ID</th>
               <th>Name</th>
               <th>Email</th>
+              <th>Contact</th>
               <th>Hire Date</th>
               <th>Country</th>
               <th>Post</th>
@@ -195,6 +195,9 @@ useEffect(() =>{
                 </td>
                 <td className="px-2 py-1 text-white print:text-black font-medium">
                   {val.email}
+                </td>
+                <td className="px-2 py-1 text-white print:text-black font-medium">
+                  {val.phone}
                 </td>
                 <td className="px-1 border-spacing-0  text-white print:text-black font-mono font-medium">
                   {new Date(val.date).toLocaleDateString()}
@@ -260,6 +263,10 @@ useEffect(() =>{
           <p>{selectedEmployee.email}</p>
         </div>
         <div className="flex mb-3 p-1 border-b border-gray-500">
+          <label className="mr-2 font-bold">Phone:</label>
+          <p>{selectedEmployee.phone}</p>
+        </div>
+        <div className="flex mb-3 p-1 border-b border-gray-500">
           <label className="mr-2 font-bold">Employee ID:</label>
           <p>{selectedEmployee.employeeid}</p>
         </div>
@@ -292,12 +299,7 @@ useEffect(() =>{
     >
       Close
     </button>
-    <button
-      className="rounded px-4 py-1 bg-green-600 hover:bg-red-800 relative right-[400px] top-[200px] ml-6"
-      onClick={printIndividualRecord}
-    >
-      Print
-    </button>
+   
   </div>
 )}
     </div>

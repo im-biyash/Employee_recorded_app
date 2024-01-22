@@ -23,7 +23,6 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage: storage });
 
-
 app.post("/login", (req, res) => {
   const { username, password } = req.body;
   db.query(
@@ -32,7 +31,6 @@ app.post("/login", (req, res) => {
     (err, result) => {
       if (err) {
         console.error(err);
-        return res.send("failed");
       } else if (result.length > 0) {
         return res.send("success");
       } else {
@@ -42,12 +40,20 @@ app.post("/login", (req, res) => {
   );
 });
 
-
-
 // ... (existing code)
 
 app.post("/create", upload.single("photo"), (req, res) => {
-  const { name, employeeid, email, date, country,post, position, wage } = req.body;
+  const {
+    name,
+    employeeid,
+    email,
+    phone,
+    date,
+    country,
+    post,
+    position,
+    wage,
+  } = req.body;
   const photo = req.file;
   console.log(req.body);
   console.log(req.file);
@@ -71,13 +77,11 @@ app.post("/create", upload.single("photo"), (req, res) => {
           error: "An error occurred while fetching employee data.",
         });
       } else if (result.length > 0) {
-        return res
-          .status(400)
-          .json({ error: "Employee already exists" });
+        return res.status(400).json({ error: "Employee already exists" });
       } else {
         // Employee does not exist, proceed with the insert
         const sql =
-          "INSERT INTO datas (name, employeeid, email, date, country, post, position, wage, photo) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+          "INSERT INTO datas (name, employeeid, email, phone, date, country, post, position, wage, photo) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
         db.query(
           sql,
@@ -85,6 +89,7 @@ app.post("/create", upload.single("photo"), (req, res) => {
             name,
             employeeid,
             email,
+            phone,
             date,
             country,
             post,
@@ -95,8 +100,7 @@ app.post("/create", upload.single("photo"), (req, res) => {
           (err, result) => {
             if (err) {
               console.error(
-                "Error inserting data into the database: " +
-                  err.message
+                "Error inserting data into the database: " + err.message
               );
               return res.status(500).json("Error");
             } else {
@@ -113,7 +117,6 @@ app.post("/create", upload.single("photo"), (req, res) => {
   );
 });
 
-
 // Serve uploaded files statically
 app.use("/public", express.static("public"));
 
@@ -122,7 +125,9 @@ app.get("/employees", (req, res) => {
   db.query("SELECT * FROM datas", (err, result) => {
     if (err) {
       console.error(err);
-      res.status(500).json({ error: "An error occurred while fetching employee data." });
+      res
+        .status(500)
+        .json({ error: "An error occurred while fetching employee data." });
     } else {
       res.json(result);
     }
@@ -185,7 +190,9 @@ app.delete("/delete/:employeeid", (req, res) => {
   db.query(sql, (err, result) => {
     if (err) {
       console.error("Error deleting employee: " + err.message);
-      res.status(500).json({ error: "An error occurred while deleting the employee." });
+      res
+        .status(500)
+        .json({ error: "An error occurred while deleting the employee." });
     } else {
       console.log("Delete operation result:", result);
 
@@ -201,7 +208,7 @@ app.delete("/delete/:employeeid", (req, res) => {
 
 app.get("/employeeChartData", (req, res) => {
   const sql = "SELECT position, COUNT(*) as count FROM datas GROUP BY position";
-  
+
   db.query(sql, (err, result) => {
     if (err) {
       console.error("Error fetching chart data from database:", err.message);
@@ -214,9 +221,6 @@ app.get("/employeeChartData", (req, res) => {
 
 // ... (existing code)
 
-
 app.listen(3001, () => {
   console.log("App listening on port 3001");
 });
-
-
