@@ -65,6 +65,30 @@ app.post("/create", upload.single("photo"), (req, res) => {
   if (!["image/jpeg", "image/png", "image/gif"].includes(photo.mimetype)) {
     return res.status(400).json({ error: "Invalid file type" });
   }
+<<<<<<< HEAD
+=======
+
+  // check if employeeid already exists
+  db.query(
+    "SELECT * FROM datas WHERE employeeid = ?",
+    employeeid,
+    (err, result) => {
+      if (err) {
+        console.error(err);
+        return res.status(500).json({ error: "An error occurred while fetching employee data." });
+      } else if (result.length > 0) {
+        return res.status(400).json({ error: "Employee already exists" });
+      } else {
+        console.log("Employee does not exist");
+      }
+    }
+  );
+
+
+  // Set the mimetype to "image/jpeg"
+  const sql =
+    "INSERT INTO datas (name, employeeid, email, date, country, position, wage, photo) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+>>>>>>> origin/main
 
   // Check if employeeid already exists
   db.query(

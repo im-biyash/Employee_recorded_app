@@ -27,17 +27,31 @@ export default function Login() {
     return;
   }
 
+<<<<<<< HEAD:frontend/src/Components/Login.jsx
   try {
     const res = await axios.post("http://localhost:3001/login", {
       
+=======
+    try {
+      setLoading(true);
+      const res = await axios.post("http://localhost:3001/login", {
+>>>>>>> origin/main:frontend/src/Components/Login.js
         username: username,
         password: password,
    
     });
 
+<<<<<<< HEAD:frontend/src/Components/Login.jsx
     if (res.data === "success") {
       setLoading(true);
       setTimeout(() => {
+=======
+      if (res.data === "success") {
+        await new Promise((resolve) => setTimeout(resolve, 2000));
+        setLoading(false);
+        navigate("/home");
+      } else {
+>>>>>>> origin/main:frontend/src/Components/Login.js
         setLoading(false);
         navigate("/home");
       }, 2000);
@@ -66,9 +80,21 @@ export default function Login() {
 
   return (
     <>
+<<<<<<< HEAD:frontend/src/Components/Login.jsx
       <div className="min-h-screen bg-[#0a192f]">
         <div className="flex  items-center justify-center ">          
           <h1 className="text-bold text-4xl font-mono font-bold italic relative top-[40px]  text-white  items-center mb-10">
+=======
+      {loading && (
+        <div className="absolute inset-0 z-10 flex items-center justify-center h-screen bg-gray-800 bg-opacity-50">
+          <RingLoader color="#36D7B7" loading={loading} size={50} />
+        </div>
+      )}
+
+      <div className="min-h-screen bg-gray">
+        <div className="flex items-center justify-center">
+          <h1 className="text-bold text-4xl font-mono font-bold italic text-red-500 relative top-[50px] left-[60px] items-center mb-4">
+>>>>>>> origin/main:frontend/src/Components/Login.js
             Employee Recorder Application
           </h1>
         </div>
