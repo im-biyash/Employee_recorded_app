@@ -11,22 +11,17 @@ export default function Employees() {
   const [selectedEmployee, setSelectedEmployee] = useState(null);
   const [selectedPosition, setSelectedPosition] = useState("");
 
-useEffect(() =>{
-  const fetchdata = async ()=>{
-    try{
-      const result = await axios.get("http://localhost:3001/employees");
-      setEmployeeList(result.data);
-    }
-    catch(error){
-      
-      console.log("error in getting daa from backend", error);
-      
-    }
-  };
-  fetchdata();
-  
-}, [])
-
+  useEffect(() => {
+    const fetchdata = async () => {
+      try {
+        const result = await axios.get("http://localhost:3001/employees");
+        setEmployeeList(result.data);
+      } catch (error) {
+        console.log("error in getting daa from backend", error);
+      }
+    };
+    fetchdata();
+  }, []);
 
   const sortEmployeeList = () => {
     if (sortingOption === "name") {
@@ -48,12 +43,15 @@ useEffect(() =>{
 
   const updateFilteredList = () => {
     return employeeList.filter((employee) => {
-      const nameMatches = employee.name.toLowerCase().includes(searchInput.toLowerCase());
-      const positionMatches = selectedPosition ? employee.position.toLowerCase() === selectedPosition.toLowerCase() : true;
+      const nameMatches = employee.name
+        .toLowerCase()
+        .includes(searchInput.toLowerCase());
+      const positionMatches = selectedPosition
+        ? employee.position.toLowerCase() === selectedPosition.toLowerCase()
+        : true;
       return nameMatches && positionMatches;
     });
   };
-  
 
   const deleteEmployee = (employeeid) => {
     axios
@@ -85,7 +83,7 @@ useEffect(() =>{
 
   const handleSortingChange = (event) => {
     setSortingOption(event.target.value);
-    sortEmployeeList(); 
+    sortEmployeeList();
   };
 
   useEffect(() => {
@@ -128,26 +126,25 @@ useEffect(() =>{
             <option value="date">Hire date</option>
           </select>
           <div>
-
-          <label
-            htmlFor="sorting option"
-            className="text-white relative right-[300px]"
-          >
-            Position
-          </label>
-          <select
-            className=" relative right-[290px]  border-black border-2 bg-gray-100"
-            name="sortingOption"
-            id="sortingOption"
-            value={selectedPosition}
-            onChange={(e) => setSelectedPosition(e.target.value)}
-          >
-            <option value="">All</option>
-            <option value="intern">intern</option>
-            <option value="junior">junior</option>
-            <option value="mid-level">mid-level</option>
-            <option value="senior">senior</option>
-          </select>
+            <label
+              htmlFor="sorting option"
+              className="text-white relative right-[300px]"
+            >
+              Position
+            </label>
+            <select
+              className=" relative right-[290px]  border-black border-2 bg-gray-100"
+              name="sortingOption"
+              id="sortingOption"
+              value={selectedPosition}
+              onChange={(e) => setSelectedPosition(e.target.value)}
+            >
+              <option value="">All</option>
+              <option value="intern">intern</option>
+              <option value="junior">junior</option>
+              <option value="mid-level">mid-level</option>
+              <option value="senior">senior</option>
+            </select>
           </div>
 
           <div className="buttons p-3 mr-4 px-2 ">
@@ -172,6 +169,7 @@ useEffect(() =>{
               <th>Post</th>
               <th>Position</th>
               <th>Salary</th>
+              <th>Attendance</th>
               <th className="print:hidden">Actions</th>
             </tr>
           </thead>
@@ -188,7 +186,7 @@ useEffect(() =>{
                 className="border divide-x border-slate-700 divide-slate-700 mt-9 text-white print:text-black "
               >
                 <td className="px-1 py-1 text-white print:text-black  font-medium">
-                  {val.employeeid}
+                  {val.id}
                 </td>
                 <td className="px-2 py-1 text-white  print:text-black font-mono font-medium">
                   {val.name}
@@ -214,17 +212,20 @@ useEffect(() =>{
                 <td className="px-2 py-1 text-white print:text-black ffont-medium">
                   {val.wage}
                 </td>
+                <td className="px-2 py-1 text-white print:text-black ffont-medium">
+                  {val.attendance}
+                </td>
                 <td className="px-1 py-1 text-white print:text-black font-medium print:hidden">
                   <div className=" w-1/2 flex items-center space-x-1">
                     <Link
-                      to={`/employee/edit/${val.employeeid}/`}
+                      to={`/employee/edit/${val.id}/`}
                       className="rounded px-4 py-1 bg-blue-600 hover:bg-blue-800"
                     >
                       Edit
                     </Link>
                     <button
                       className="rounded px-4 py-1 bg-red-600 hover:bg-red-800"
-                      onClick={() => deleteEmployee(val.employeeid)}
+                      onClick={() => deleteEmployee(val.id)}
                     >
                       Delete
                     </button>
@@ -243,65 +244,48 @@ useEffect(() =>{
       </div>
 
       {isModalOpen && selectedEmployee && (
-  <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex justify-center items-center">
-    <div className="bg-s p-4 rounded-lg w-1/2 h-[500px] flex  items-center bg-[#0a192f] gap-28">
-      <div>
-        <img
-          src={`http://localhost:3001/public/${selectedEmployee.photo}`}
-          alt={selectedEmployee.name}
-          className="w-[250px] h-[250px] rounded-3xl"
-        />
-        <h1 className="text-white text-2xl p-2 ml-3 mt-4">{selectedEmployee.name}</h1>
-      </div>
-      <div className="p-3 mb-9 text-white font-serif text-left w-[50%]">
-        <div className="flex mb-3 p-1 border-b border-gray-500">
-          <label className="mr-2 font-bold p-1">Name:</label>
-          <p className="bg-gray-500 rounded ml-4 p-1">{selectedEmployee.name}</p>
-        </div>
-        <div className="flex mb-3 p-1 border-b border-gray-500">
-          <label className="mr-2 font-bold">Email:</label>
-          <p>{selectedEmployee.email}</p>
-        </div>
-        <div className="flex mb-3 p-1 border-b border-gray-500">
-          <label className="mr-2 font-bold">Phone:</label>
-          <p>{selectedEmployee.phone}</p>
-        </div>
-        <div className="flex mb-3 p-1 border-b border-gray-500">
-          <label className="mr-2 font-bold">Employee ID:</label>
-          <p>{selectedEmployee.employeeid}</p>
-        </div>
-        <div className="flex mb-3 p-1 border-b border-gray-500">
-          <label className="mr-2 font-bold">Hire date:</label>
-          <p>{new Date(selectedEmployee.date).toLocaleDateString()}</p>
-        </div>
-        <div className="flex mb-3 p-1 border-b border-gray-500">
-          <label className="mr-2 font-bold">Country:</label>
-          <p>{selectedEmployee.country}</p>
-        </div>
-        <div className="flex mb-3 p-1 border-b border-gray-500">
-          <label className="mr-2 font-bold">Post:</label>
-          <p>{selectedEmployee.post}</p>
-        </div>
-        <div className="flex mb-3 p-1 border-b border-gray-500">
-          <label className="mr-2 font-bold">Position:</label>
-          <p className="whitespace-nowrap">{selectedEmployee.position}</p>
-        </div>
-        <div className="flex mb-3 p-1">
-          <label className="mr-2 font-bold">Wage:</label>
-          <p>{selectedEmployee.wage}</p>
-        </div>
-      </div>
-    </div>
+        <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex justify-center items-center">
+          <div className="bg-s p-4 rounded-lg w-1/2 h-[500px] flex items-center bg-[#0a192f] gap-28">
+            {selectedEmployee.photo && (
+              <div>
+                <img
+                  src={`http://localhost:3001/public/${selectedEmployee.photo}`}
+                  alt={selectedEmployee.name}
+                  className="w-[250px] h-[250px] rounded-3xl"
+                />
+                <h1 className="text-white text-2xl p-2 ml-3 mt-4">
+                  {selectedEmployee.name}
+                </h1>
+              </div>
+            )}
+            <div className="p-3 mb-9 text-white font-serif text-left w-[50%]">
+              {/* Add checks for each property */}
+              {selectedEmployee.name && (
+                <div className="flex mb-3 p-1 border-b border-gray-500">
+                  <label className="mr-2 font-bold p-1">Name:</label>
+                  <p className="bg-gray-500 rounded ml-4 p-1">
+                    {selectedEmployee.name}
+                  </p>
+                </div>
+              )}
+              {selectedEmployee.email && (
+                <div className="flex mb-3 p-1 border-b border-gray-500">
+                  <label className="mr-2 font-bold">Email:</label>
+                  <p>{selectedEmployee.email}</p>
+                </div>
+              )}
+              {/* Add similar checks for other properties */}
+            </div>
+          </div>
 
-    <button
-      className="rounded px-4 py-1 bg-green-600 hover:bg-red-800 relative right-[400px] top-[200px]"
-      onClick={() => setIsModalOpen(false)}
-    >
-      Close
-    </button>
-   
-  </div>
-)}
+          <button
+            className="rounded px-4 py-1 bg-green-600 hover:bg-red-800 relative right-[400px] top-[200px]"
+            onClick={() => setIsModalOpen(false)}
+          >
+            Close
+          </button>
+        </div>
+      )}
     </div>
   );
 }

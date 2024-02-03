@@ -8,7 +8,6 @@ import Navbar from "./Navbar";
 import { useNavigate } from "react-router-dom";
 export default function Form() {
   const [name, setName] = useState("");
-  const [employeeid, setEmployeeid] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
   const [date, setDate] = useState("");
@@ -25,7 +24,6 @@ export default function Form() {
 
     if (
       !name ||
-      !employeeid ||
       !email ||
       !phone ||
       !date ||
@@ -44,7 +42,6 @@ export default function Form() {
 
     // Append other form data
     formData.append("name", name);
-    formData.append("employeeid", employeeid);
     formData.append("email", email);
     formData.append("phone", phone);
     formData.append("date", date);
@@ -69,7 +66,7 @@ export default function Form() {
       } else {
         // Handle other types of errors
         setError(error.response.data.error);
-      }
+      }       
     }
   };
 
@@ -102,23 +99,7 @@ export default function Form() {
               />
             </div>
 
-            <div className="mb-2">
-              <label
-                htmlFor="employeeId"
-                className="block text-white  text-sm  mb-2"
-              >
-                Employee ID
-              </label>
-              <input
-                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                id="employeeId"
-                type="text"
-                placeholder="Enter employee ID"
-                onChange={(e) => {
-                  setEmployeeid(e.target.value);
-                }}
-              />
-            </div>
+
 
             <div className="mb-2">
               <label

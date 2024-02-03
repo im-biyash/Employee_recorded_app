@@ -1,12 +1,10 @@
-
 import React, { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import backimage from "../Assets/backimage.jpg";
 import { RingLoader } from "react-spinners";
-
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEye } from "@fortawesome/free-solid-svg-icons";
+import backimage from "../Assets/backimage.jpg";
 
 export default function Login() {
   const navigate = useNavigate();
@@ -17,89 +15,63 @@ export default function Login() {
   const [passwordError, setPasswordError] = useState("");
   const [loading, setLoading] = useState(false);
 
- const handleLogin = async () => {
-  if (username === "") {
-    setUsernameError("Username is required");
-   
-  } 
-  if (password === "") {
-    setPasswordError("Password is required");
-    return;
-  }
+  const handleUsername = (event) => {
+    setUsername(event.target.value);
+    setUsernameError("");
+  };
 
-<<<<<<< HEAD:frontend/src/Components/Login.jsx
-  try {
-    const res = await axios.post("http://localhost:3001/login", {
-      
-=======
+  const handlePassword = (event) => {
+    setPassword(event.target.value);
+    setPasswordError("");
+  };
+
+  const handleLogin = async () => {
+    if (username === "") {
+      setUsernameError("Username is required");
+      return;
+    }
+
+    if (password === "") {
+      setPasswordError("Password is required");
+      return;
+    }
+
     try {
       setLoading(true);
       const res = await axios.post("http://localhost:3001/login", {
->>>>>>> origin/main:frontend/src/Components/Login.js
         username: username,
         password: password,
-   
-    });
+      });
 
-<<<<<<< HEAD:frontend/src/Components/Login.jsx
-    if (res.data === "success") {
-      setLoading(true);
-      setTimeout(() => {
-=======
       if (res.data === "success") {
-        await new Promise((resolve) => setTimeout(resolve, 2000));
-        setLoading(false);
-        navigate("/home");
+        setTimeout(() => {
+          setLoading(false);
+          navigate("/home");
+        }, 2000);
       } else {
->>>>>>> origin/main:frontend/src/Components/Login.js
         setLoading(false);
-        navigate("/home");
-      }, 2000);
-    } else {
-      console.log(res);
-      alert("You are not an admin");
+        alert("You are not an admin");
+      }
+    } catch (error) {
+      console.error("Error while logging in:", error);
+      alert("An error occurred during login. Please try again.");
+      setLoading(false);
     }
-  } catch (error) {
-    console.error("Error while logging in:", error);
-    alert("An error occurred during login. Please try again.");
-    setLoading(false);
+  };
+
+  const handleemployeeLogin= () =>{
+    navigate("/employeeLogin")
   }
-  console.log("hey");
-};
-
-  const handleUsernamechange = (e) => {
-    console.log(e.target.value);
-    setUsername(e.target.value);
-    setUsernameError(""); // Clear the error message
-  };
-
-  const handlePasswordchange = (e) => {
-    setPassword(e.target.value);
-    setPasswordError(""); // Clear the error message
-  };
 
   return (
     <>
-<<<<<<< HEAD:frontend/src/Components/Login.jsx
       <div className="min-h-screen bg-[#0a192f]">
-        <div className="flex  items-center justify-center ">          
+        <div className="flex items-center justify-center ">
           <h1 className="text-bold text-4xl font-mono font-bold italic relative top-[40px]  text-white  items-center mb-10">
-=======
-      {loading && (
-        <div className="absolute inset-0 z-10 flex items-center justify-center h-screen bg-gray-800 bg-opacity-50">
-          <RingLoader color="#36D7B7" loading={loading} size={50} />
-        </div>
-      )}
-
-      <div className="min-h-screen bg-gray">
-        <div className="flex items-center justify-center">
-          <h1 className="text-bold text-4xl font-mono font-bold italic text-red-500 relative top-[50px] left-[60px] items-center mb-4">
->>>>>>> origin/main:frontend/src/Components/Login.js
             Employee Recorder Application
           </h1>
         </div>
         {loading && (
-          // Display ring loader only when loading state is true
           <div className="flex justify-center items-center h-screen">
             <RingLoader color="#36d68f" size={200} speedMultiplier={1} />
           </div>
@@ -121,7 +93,7 @@ export default function Login() {
                   name="username"
                   placeholder="Enter your username"
                   value={username}
-                  onChange={handleUsernamechange}
+                  onChange={handleUsername}
                 />
                 <span style={{ minHeight: "16px" }}>
                   <p className="text-bold text-red-500">{usernameError}</p>
@@ -138,11 +110,9 @@ export default function Login() {
                     name="password"
                     placeholder="Enter your password"
                     value={password}
-                    onChange={handlePasswordchange}
+                    onChange={handlePassword}
                   />
-
                   <p className="text-bold text-red-400">{passwordError}</p>
-
                   <span>
                     <FontAwesomeIcon
                       icon={faEye}
@@ -159,6 +129,16 @@ export default function Login() {
                 >
                   Login
                 </button>
+                
+              </div>
+              <div className="flex items-center justify-center py-1 mb-3">
+                <button
+                  className="w-full bg-blue-500 rounded-lg p-2 text-white font-bold hover:bg-slate-100"
+                  onClick={handleemployeeLogin}
+                >
+                  Login as Employee
+                </button>
+                
               </div>
             </div>
             <div className="hidden md:block right w-[400px] h-auto rounded">

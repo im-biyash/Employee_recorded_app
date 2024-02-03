@@ -6,6 +6,9 @@ import Home from "./Components/Home";
 import Form from "./Components/Form";
 import Employee from "./Components/Employee";
 import Employeeedit from "./Components/Employeeedit";
+import EmployeeLogin from "./Components/EmployeeLogin";
+import SpecificEmployeepage from "./Components/SpecificEmployeepage";
+
 
 function App() {
   return (
@@ -17,6 +20,8 @@ function App() {
           <Route path="/form" element={<Form />} />
           <Route path="/employee" element={<Employee />} />
           <Route path="/employee/edit/:id" element={<Employeeedit />} />
+          <Route path="/employeeLogin" element={<EmployeeLogin/>} />
+          <Route path="/specificEmployeepage/:id" element={<SpecificEmployeepage />} />
         </Routes>
       </div>
     </Router>
