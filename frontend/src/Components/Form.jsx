@@ -38,18 +38,18 @@ export default function Form() {
     }
 
     const formData = new FormData();
-    formData.append("photo", photo);
-
+    
     // Append other form data
     formData.append("name", name);
     formData.append("email", email);
     formData.append("phone", phone);
     formData.append("date", date);
     formData.append("country", country);
-    formData.append("post", post); // Corrected line
+    formData.append("post", post); 
     formData.append("position", position);
     formData.append("wage", wage);
-
+    formData.append("photo", photo);
+    
     try {
       await axios.post("http://localhost:3001/create", formData);
 
@@ -58,15 +58,7 @@ export default function Form() {
       event.target.reset();
       setDate("");
     } catch (error) {
-      // console.error("Error:", error.response.data.error);
-
-      // Check if the error is due to an existing employee ID
-      if (error.response.data.error === "Employee already exists") {
-        alert("Employee with the provided ID already exists");
-      } else {
-        // Handle other types of errors
-        setError(error.response.data.error);
-      }       
+    
     }
   };
 

@@ -10,6 +10,7 @@ function Employeeedit() {
   const [updatedCountry, setUpdatedCountry] = useState("");
   const [updatedPost, setUpdatedPost] = useState("");
   const [updatedWage, setUpdatedWage] = useState("");
+  const [updatedposition, setUpdatedposition] = useState("");
   const navigate = useNavigate();
   useEffect(() => {
     axios
@@ -20,6 +21,7 @@ function Employeeedit() {
         setUpdatedCountry(response.data.country);
         setUpdatedPost(response.data.post);
         setUpdatedWage(response.data.wage);
+        setUpdatedposition(response.data.position);
       })
       .catch((error) => {
         console.log("Error fetching employee data", error);
@@ -32,18 +34,24 @@ function Employeeedit() {
         country: updatedCountry,
         post: updatedPost,
         wage: updatedWage,
+        position:updatedposition
       })
       .then((response) => {
+        console.log("Request payload:", {
+          country: updatedCountry,
+          post: updatedPost,
+          wage: updatedWage,
+          position:updatedposition
+        });
         console.log("Employee updated successfully", response);
-        // Update the local state with the new data, including existing position value
         setEmployeeData(response.data);
-        console.log(response.data);
       })
       .catch((error) => {
         console.error("Error updating employee", error);
       });
-    navigate("/employee");
+      navigate("/employee");
   };
+  
 
   return (
     <div className="bg-[#0a192f] min-h-screen">
@@ -109,6 +117,28 @@ function Employeeedit() {
                 value={updatedPost}
                 onChange={(e) => setUpdatedPost(e.target.value)}
               />
+            </div>
+            <div className="mb-2">
+              <label
+                htmlFor="position"
+                className="block text-white text-sm mb-2"
+              >
+                Position
+              </label>
+              <select
+                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                id="position"
+                value={updatedposition}
+                onChange={(e) => {
+                  setUpdatedposition(e.target.value);
+                }}
+              >
+                <option value="">Select Position</option>
+                <option value="intern">Intern</option>
+                <option value="junior">Junior</option>
+                <option value="mid-level">Mid-Level</option>
+                <option value="senior">Senior</option>
+              </select>
             </div>
 
             <div className="mb-4">

@@ -3,7 +3,7 @@ const mysql = require("mysql"); // Import the mysql package
 const app = express();
 const cors = require("cors");
 const multer = require("multer");
-const { format } = require('date-fns');
+const { format } = require("date-fns");
 
 app.use(cors());
 app.use(express.json());
@@ -51,7 +51,9 @@ app.post("/employeeLogin", (req, res) => {
   db.query(sql, [employeeName, employeeId], (err, result) => {
     if (err) {
       console.error(err);
-      return res.status(500).json({ error: "An error occurred while fetching employee data." });
+      return res
+        .status(500)
+        .json({ error: "An error occurred while fetching employee data." });
     }
 
     if (result.length > 0) {
@@ -64,104 +66,50 @@ app.post("/employeeLogin", (req, res) => {
   });
 });
 
-
-
 // ... (existing code)
 
 app.post("/create", upload.single("photo"), (req, res) => {
   const {
     name,
-  
     email,
     phone,
     date,
     country,
-    post,
+    post, // Make sure 'post' is included in the request body
     position,
     wage,
   } = req.body;
+
   const photo = req.file;
-  console.log(req.body);
-  console.log(req.file);
 
   // Ensure that the file is provided
   if (!photo) {
     return res.status(400).json({ error: "No file provided" });
   }
+
   if (!["image/jpeg", "image/png", "image/gif"].includes(photo.mimetype)) {
     return res.status(400).json({ error: "Invalid file type" });
   }
 
+  // Check if employee with the given email already exists
 
-
-  // check if employeeid already exists
-  db.query(
-    "SELECT * FROM datas WHERE id = ?",
-    id,
-    (err, result) => {
-      if (err) {
-        console.error(err);
-        return res.status(500).json({ error: "An error occurred while fetching employee data." });
-      } else if (result.length > 0) {
-        return res.status(400).json({ error: "Employee already exists" });
-      } else {
-        console.log("Employee does not exist");
-      }
-    }
-  );
-
-
-  // Set the mimetype to "image/jpeg"
+  // Employee does not exist, proceed with the insert
   const sql =
-    "INSERT INTO datas (name,  email, date, country, position, wage, photo) VALUES (?, ?, ?, ?, ?, ?, ?)";
+    "INSERT INTO employees (name, email, phone, date, country, post, position, wage, photo) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
-
-  // Check if employeeid already exists
   db.query(
-    "SELECT * FROM datas WHERE id = ?",
-    [employeeid],
+    sql,
+    [name, email, phone, date, country, post, position, wage, photo.filename],
     (err, result) => {
       if (err) {
-        console.error(err);
-        return res.status(500).json({
-          error: "An error occurred while fetching employee data.",
-        });
-      } else if (result.length > 0) {
-        return res.status(400).json({ error: "Employee already exists" });
+        console.error("Error inserting data into the database: " + err.message);
+        return res.status(500).json("Error");
       } else {
-        // Employee does not exist, proceed with the insert
-        const sql =
-          "INSERT INTO datas (name, email, phone, date, country, post, position, wage, photo) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-
-        db.query(
-          sql,
-          [
-            name,
-       
-            email,
-            phone,
-            date,
-            country,
-            post,
-            position,
-            wage,
-            photo.filename,
-          ],
-          (err, result) => {
-            if (err) {
-              console.error(
-                "Error inserting data into the database: " + err.message
-              );
-              return res.status(500).json("Error");
-            } else {
-              console.log(result);
-              console.log("Data inserted successfully");
-              return res.status(200).json({
-                result: "Employee created successfully.",
-              });
-            }
-          }
-        );
+        console.log(result);
+        console.log("Data inserted successfully");
+        return res.status(200).json({
+          result: "Employee created successfully.",
+        });
       }
     }
   );
@@ -169,8 +117,24 @@ app.post("/create", upload.single("photo"), (req, res) => {
 
 // Serve uploaded files statically
 app.use("/public", express.static("public"));
+app.get("/getAttendanceStatus/:id", (req, res) => {
+  const checkAttendanceQuery =
+    "SELECT status FROM attendance WHERE employee_id = ? AND date(attendance_date) = CURRENT_DATE()";
+  db.query(checkAttendanceQuery, [req.params.id], (err, result) => {
+    if (err) {
+      console.error(err);
+      return res
+        .status(500)
+        .json({
+          error: "An error occurred while checking attendance.",
+          details: err.message,
+        });
+    }
+    res.json(result[0]); // Assuming result is an array with a single object
+    console.log(result);
+  });
+});
 
-// Assuming you have an Express app and a MySQL database connection (db) already set up
 app.get("/employees", (req, res) => {
   db.query("SELECT * FROM employees", (err, result) => {
     if (err) {
@@ -179,19 +143,46 @@ app.get("/employees", (req, res) => {
         .status(500)
         .json({ error: "An error occurred while fetching employee data." });
     } else {
-      res.json(result);
+      const currentDateTime = format(new Date(), "yyyy-MM-dd");
+
+      const employees = result;
+      db.query(
+        "SELECT status,employee_id FROM attendance WHERE date(attendance_date) = ?",
+        [currentDateTime],
+        (err, result) => {
+          if (err) {
+            console.error(err);
+            res
+              .status(500)
+              .json({
+                error: "An error occurred while fetching attendance data.",
+              });
+          } else {
+            todays_attendance = result;
+            console.log(todays_attendance);
+            const data = employees.map((employee) => {
+              employee.status =
+                todays_attendance.find(
+                  (attendance) => attendance.employee_id === employee.id
+                )?.status || "Absent";
+              return employee;
+            });
+            res.json(data);
+          }
+        }
+      );
     }
   });
 });
 
 app.put("/update/:id", (req, res) => {
   const id = parseInt(req.params.id);
-  const { country, post, wage } = req.body;
+  const { country, post, position, wage } = req.body; // Add 'position' here
 
   const sql =
-    "UPDATE employees SET country = ?, post = ?, wage = ? WHERE employeeid = ?";
+    "UPDATE employees SET country = ?, post = ?, position = ?, wage = ? WHERE id = ?";
 
-  db.query(sql, [country, post, wage, id], (err, result) => {
+  db.query(sql, [country, post, position, wage, id], (err, result) => {
     if (err) {
       console.error("Error updating data in the database: " + err.message);
       return res.status(500).json("Error");
@@ -202,6 +193,7 @@ app.put("/update/:id", (req, res) => {
     }
   });
 });
+
 
 app.get("/edit/:id", (req, res) => {
   const id = parseInt(req.params.id);
@@ -224,8 +216,8 @@ app.get("/edit/:id", (req, res) => {
 
 // Add a new route to handle DELETE requests
 app.delete("/delete/:id", (req, res) => {
-  const employeeid = req.params.employeeid;
-  console.log("Deleting employee with id: " + id);
+  const employeeid = req.params.id; // Corrected to req.params.id
+  console.log("Deleting employee with id: " + employeeid);
 
   // Check if db is properly connected before handling the delete request
   if (!db) {
@@ -234,7 +226,7 @@ app.delete("/delete/:id", (req, res) => {
     return;
   }
 
-  const sql = `DELETE FROM datas WHERE id = ${id}`;
+  const sql = `DELETE FROM employees WHERE id = ${employeeid}`;
   console.log("SQL Query: " + sql);
 
   db.query(sql, (err, result) => {
@@ -254,10 +246,12 @@ app.delete("/delete/:id", (req, res) => {
     }
   });
 });
+
 // ... (existing code)
 
 app.get("/employeeChartData", (req, res) => {
-  const sql = "SELECT position, COUNT(*) as count FROM employees GROUP BY position";
+  const sql =
+    "SELECT position, COUNT(*) as count FROM employees GROUP BY position";
 
   db.query(sql, (err, result) => {
     if (err) {
@@ -283,7 +277,7 @@ app.get("/getEmployeeData/:id", (req, res) => {
     }
   });
 });
-app.post("/markAttendance", (req, res) => {
+app.post("/markAttendance/:id", (req, res) => {
   const { employeeId } = req.body;
 
   // Validate if employeeId is provided
@@ -294,58 +288,161 @@ app.post("/markAttendance", (req, res) => {
   // Get the current date and time
   const currentDateTime = format(new Date(), "yyyy-MM-dd HH:mm:ss");
 
-  // Check if attendance for the current date and time already exists
-  const checkAttendanceQuery = "SELECT * FROM attendance WHERE employee_id = ? AND attendance_date = ?";
-  db.query(checkAttendanceQuery, [employeeId, currentDateTime], (err, result) => {
+  // Check if attendance for the current date already exists
+  const checkAttendanceQuery =
+    "SELECT * FROM attendance WHERE employee_id = ? AND DATE(attendance_date) = CURDATE()";
+
+  db.query(checkAttendanceQuery, [employeeId], (err, result) => {
     if (err) {
       console.error(err);
-      return res.status(500).json({ error: "An error occurred while checking attendance." });
+      return res
+        .status(500)
+        .json({ error: "An error occurred while checking attendance." });
     }
 
-    // If attendance for the current date and time already exists, send a message
+    // If attendance for the current date already exists, send a message
     if (result.length > 0) {
-      return res.json({ message: "Attendance already marked for today." });
+      return res.json({ message: "Attendance already marked for today" });
     }
+
+    // Check if the current time is past midnight (beginning of the next day)
 
     // Insert new attendance record
-    const markAttendanceQuery = "INSERT INTO attendance (employee_id, attendance_date) VALUES (?, ?)";
-    db.query(markAttendanceQuery, [employeeId, currentDateTime], (err, result) => {
-      if (err) {
-        console.error(err);
-        return res.status(500).json({ error: "An error occurred while marking attendance." });
-      }
+    const markAttendanceQuery =
+      "INSERT INTO attendance (employee_id, attendance_date, status) VALUES (?, ?, 'Yes')";
+    db.query(
+      markAttendanceQuery,
+      [employeeId, currentDateTime],
+      (err, result) => {
+        if (err) {
+          console.error(err);
+          return res
+            .status(500)
+            .json({ error: "An error occurred while marking attendance." });
+        }
 
-      // Successful attendance marking
-      return res.json({ message: "Attendance marked successfully." });
-    });
+        // Successful attendance marking
+        return res.json({
+          message: "Attendance marked successfully",
+        });
+      }
+    );
   });
 });
 
-// const attendance_list = [];
-// // Assuming today is a JavaScript Date object representing the current date
-// const today = new Date();
 
-// // Assuming your employees array is named 'employees'
-// const data = employeeList.map((employee) => {
-//   // Assuming the 'id' and 'attendance_date' are properties of the employee object
-//   // You can modify this based on the structure of your data
-//   const employeeId = employee.id;
 
-//   // Check if the employee has attendance for today
-//   const hasAttendance = attendance_list.some(
-//     (attendance) =>
-//       attendance.employee_id === employeeId &&
-//       new Date(attendance.attendance_date).toDateString() === today.toDateString()
-//   );
+app.get("/totalMonthAttendance/:id", (req, res) => {
+  // Get the first day and last day of the current month
+  const firstDayOfMonth = format(new Date(), "yyyy-MM-01");
+  const lastDayOfMonth =
+    format(new Date(), "yyyy-MM-") +
+    new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0).getDate();
 
-//   // Assign the attendance status
-//   employee.attendance = hasAttendance ? 'yes' : 'no';
+  // Query to get the total attendance for the current month
+  const totalMonthAttendanceQuery =
+    "SELECT COUNT(*) as totalDaysPresent FROM attendance WHERE status = 'Yes' and DATE(attendance_date) between ? and ? AND employee_id = ?";
+    console.log("SQL Query:", totalMonthAttendanceQuery);
+  db.query(
+    totalMonthAttendanceQuery,
+    [firstDayOfMonth, lastDayOfMonth, req.params.id],
+    (err, result) => {
+      if (err) {
+        console.error(err);
+        return res.status(500).json({
+          error: "An error occurred while fetching total month attendance.",
+        });
+      }
+      console.log("Database Result:", result);
 
-//   // Return the modified employee object
-//   return employee;
-// });
+      // Send the total days present for the current month to the client
+      res.json(result[0]);
+    }
+  );
+});
 
-// ... (existing code)
+
+
+app.get("/getTotalPresentToday", (req, res) => {
+  // Get the current date
+  const currentDateTime = format(new Date(), "yyyy-MM-dd");
+
+  // Query to get the total number of employees present today
+  const totalPresentTodayQuery =
+    "SELECT COUNT(DISTINCT employee_id) as totalEmployeesPresent FROM attendance WHERE status = 'Yes' AND DATE(attendance_date) = ?";
+console.log(totalPresentTodayQuery);
+  db.query(totalPresentTodayQuery, [currentDateTime], (err, result) => {
+    if (err) {
+      console.error(err);
+      return res.status(500).json({
+        error: "An error occurred while fetching total present today data.",
+      });
+    }
+
+    // Send the total employees present today to the client
+    res.json(result[0]);
+  });
+});
+
+app.get("/getTotalAbsentToday", (req, res) => {
+  // Get the current date
+  const currentDateTime = format(new Date(), "yyyy-MM-dd");
+
+  // Query to get the total number of employees absent today
+  const totalAbsentTodayQuery =
+    "SELECT COUNT(DISTINCT employee_id) as totalEmployeesAbsent FROM attendance WHERE status = 'Absent' AND DATE(attendance_date) = ?";
+
+  db.query(totalAbsentTodayQuery, [currentDateTime], (err, result) => {
+    if (err) {
+      console.error(err);
+      return res.status(500).json({
+        error: "An error occurred while fetching total absent today data.",
+      });
+    }
+
+    // Send the total employees absent today to the client
+    res.json(result[0]);
+  });
+});
+app.get("/monthAttendanceLogs/:employeeId", (req, res) => {
+  const employeeId = req.params.employeeId;
+
+  // Get the first day and last day of the current month
+  const firstDayOfMonth = format(new Date(), "yyyy-MM-01");
+  const lastDayOfMonth =
+    format(new Date(), "yyyy-MM-") +
+    new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0).getDate();
+
+  // Query to get the month-wise attendance logs for the given employee
+  const monthAttendanceLogsQuery =
+    "SELECT DATE_FORMAT(attendance_date, '%b') as month, COUNT(*) as count FROM attendance WHERE status = 'Yes' AND DATE(attendance_date) between ? and ? AND employee_id = ? GROUP BY month";
+
+  db.query(
+    monthAttendanceLogsQuery,
+    [firstDayOfMonth, lastDayOfMonth, employeeId],
+    (err, result) => {
+      if (err) {
+        console.error(err);
+        return res.status(500).json({
+          error: "An error occurred while fetching month-wise attendance logs.",
+        });
+      }
+
+      // Create a map to store month-wise attendance logs
+      const monthLogs = {};
+      result.forEach((row) => {
+        monthLogs[row.month] = row.count;
+      });
+
+      // Send the month-wise attendance logs to the client
+      res.json(monthLogs);
+    }
+  );
+});
+
+
+
+
 
 app.listen(3001, () => {
   console.log("App listening on port 3001");
