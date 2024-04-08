@@ -360,6 +360,38 @@ app.get("/totalMonthAttendance/:id", (req, res) => {
     }
   );
 });
+app.get("/monthAttendanceLogs/:id", async (req, res) => {
+  try {
+    // Query to get the total attendance for each month
+    const totalMonthAttendanceQuery =
+      "SELECT COUNT(*) as totalDaysPresent, MONTH(attendance_date) as month " +
+      "FROM attendance " +
+      "WHERE status = 'Yes' AND YEAR(attendance_date) = YEAR(CURRENT_DATE()) " +
+      "AND employee_id = ? " +
+      "GROUP BY MONTH(attendance_date)";
+      
+    // Execute the SQL query
+    const result =  db.query(totalMonthAttendanceQuery, [req.params.id]);
+
+    // Check if result is an array
+    if (Array.isArray(result)) {
+      // Send the total days present for each month to the client
+      res.json(result);
+    } else {
+      // Handle cases where result is not in the expected format
+      console.error("Unexpected format of database result:", result);
+      res.status(500).json({
+        error: "Unexpected format of database result.",
+      });
+    }
+  } catch (err) {
+    console.error("Error fetching total month attendance:", err.message);
+    res.status(500).json({
+      error: "An error occurred while fetching total month attendance.",
+    });
+  }
+});
+
 
 
 
@@ -439,8 +471,6 @@ app.get("/monthAttendanceLogs/:employeeId", (req, res) => {
     }
   );
 });
-
-
 
 
 

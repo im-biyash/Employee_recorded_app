@@ -4,6 +4,10 @@ import { Link } from "react-router-dom";
 import Navbar from "./Navbar";
 
 export default function Employees() {
+  const monthsArray = [
+    "January",
+    "February",
+    "March",]
   const [employeeList, setEmployeeList] = useState([]);
   const [searchInput, setSearchInput] = useState("");
   const [sortingOption, setSortingOption] = useState("name"); // Set default sorting to "name"
@@ -79,9 +83,9 @@ export default function Employees() {
       console.error("Error deleting employee: " + error.message);
     }
   };
-  const closeModal = () =>{
+  const closeModal = () => {
     setIsModalOpen(false);
-  }
+  };
 
   const viewEmployee = async (employee) => {
     setSelectedEmployee(employee);
@@ -122,26 +126,33 @@ export default function Employees() {
     }
   };
 
-  // Function to open the attendance logs modal
-  const openAttendanceLogsModal = () => {
-    fetchMonthAttendanceLogs();
-    setIsAttendanceLogsModalOpen(true);
+  
+
+  const handleOpen = async () => {
+    console.log("button clicked");
+    try {
+      setIsAttendanceLogsModalOpen(true);
+      console.log("Attendance logs modal open:", setIsAttendanceLogsModalOpen);
+      await fetchMonthAttendanceLogs();
+    } catch (error) {
+      console.error("Error opening attendance logs modal: " + error.message);
+    }
   };
+
   const closeAttendanceLogsModal = () => {
     setIsAttendanceLogsModalOpen(false);
-  }
-
+  };
 
   return (
     <div className="bg-[#0a192f] min-h-screen">
       <Navbar />
-  
+
       <div className="bg-[#0a192f]">
         <div className="flex items-center justify-between print:hidden bg-[#0a192f]">
           <h1 className="text-2xl text-white font-bold mb-4 mx-auto ml-8">
             Employee List
           </h1>
-  
+
           <input
             type="text"
             className="absolute left-[500px] top-13 bg-gray-100 rounded-2xl border border-gray-300 p-2 text-gray-800 focus:outline-none focus:bg-white focus:border-blue-500 focus:shadow-outline-blue h-9 mx-auto"
@@ -149,7 +160,7 @@ export default function Employees() {
             value={searchInput}
             onChange={(e) => setSearchInput(e.target.value)}
           />
-  
+
           <label
             htmlFor="sorting option"
             className="text-white relative right-[400px]"
@@ -188,14 +199,14 @@ export default function Employees() {
               <option value="senior">senior</option>
             </select>
           </div>
-  
+
           <div className="buttons p-3 mr-4 px-2 ">
             <button className=" border-2 rounded-2xl p-2 bg-green-400">
               Download
             </button>
           </div>
         </div>
-  
+
         <table className="w-11/12 mx-auto border border-slate-700 text-white mt-9 print:text-black">
           <thead>
             <tr className="border bg-slate-600 divide- border-slate-700 divide-slate-700 text-white print:text-black">
@@ -220,7 +231,7 @@ export default function Employees() {
                 </td>
               </tr>
             )}
-  
+
             {updateFilteredList().map((val, key) => (
               <tr
                 key={key}
@@ -266,7 +277,7 @@ export default function Employees() {
                     </div>
                   )}
                 </td>
-  
+
                 <td className="px-1 py-1 text-white print:text-black font-medium print:hidden">
                   <div className="w-1/2 flex items-center space-x-1">
                     <Link
@@ -294,7 +305,7 @@ export default function Employees() {
           </tbody>
         </table>
       </div>
-  
+
       {isModalOpen && selectedEmployee && (
         <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex justify-center items-center">
           <div className="bg-s p-4 rounded-lg w-1/2 h-[500px] flex items-center bg-[#0a192f] gap-28">
@@ -349,41 +360,90 @@ export default function Employees() {
                     : "Loading..."}
                 </p>
               </div>
-  
-              <button
-                className="rounded px-2 py-1 bg-blue-600 hover:bg-blue-800 ml-4 mt-8"
-                onClick={openAttendanceLogsModal}
-              >
-                View Attendance Logs
-              </button>
-              {attendanceLogsModelOpen && (
+              <div>
+                <button
+                  className="mt-9 p-3 my-2 mx-3 bg-green-400"
+                  onClick={handleOpen}
+                >
+                  View attendance
+                </button>
+              </div>
+
+              {/* {attendanceLogsModelOpen && (
                 <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex justify-center items-center">
                   <div className="bg-s p-4 rounded-lg w-1/2 h-[500px] flex items-center bg-[#0a192f] gap-28">
                     <div className="p-3 mb-9 text-white font-serif text-left w-[50%] mt-4">
-                      <h1 className="text-white text-2xl p-2 ml-3 text-center relative bottom-[190px]">
-                        Attendance Logs
-                      </h1>
+                      <h1 className="text-white text-2xl p-2 ml-3 mt-9 text-center relative bottom-[190px]">
+                        Attendance Logs {/* Corrected header */}
+                      {/* </h1>
                       {Object.keys(monthAttendanceLogs).map((month, index) => (
-                        <div key={index} className="flex p-1 border-b border-gray-500">
-                          <label className="mr-2 font-bold p-1">{month}:</label>
+                        <div
+                          key={index}
+                          className="flex p-1 border-b border-gray-500"
+                        >
+                          <label className="mr-2 font-bold p-1 text-white">
+                            {month}:
+                          </label>
                           <p className="bg-gray-500 rounded ml-4 p-1">
                             {monthAttendanceLogs[month]}
                           </p>
                         </div>
                       ))}
-                      <button className="rounded px-2 py-1 bg-blue-600 hover:bg-blue-800 ml-4 mt-8" onClick={closeAttendanceLogsModal}>close</button>
+                      <button
+                        className="rounded px-2 py-1 bg-blue-600 hover:bg-blue-800 ml-4 mt-8"
+                        onClick={closeAttendanceLogsModal}
+                      >
+                        close
+                      </button>
                     </div>
                   </div>
-                  
                 </div>
-              )}
-          <div>
-            <button className="bg-red-400 mt-7 p-2 rounded-xl" onClick={closeModal}>close</button>
-          </div>
+              )} */}
+
+
+{attendanceLogsModelOpen && (
+  <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex justify-center items-center">
+    <div className="bg-s p-4 rounded-lg w-1/2 h-[500px] flex items-center bg-[#0a192f] gap-28">
+      <div className="p-3 mb-9 text-white font-serif text-left w-[50%] mt-4">
+        <h1 className="text-white text-2xl p-2 ml-3 mt-9 text-center relative bottom-[190px]">
+          Attendance Logs
+        </h1>
+        <div className="flex flex-wrap">
+          {monthsArray.map((month, index) => (
+            <div key={index} className="w-1/2">
+              <div className="flex p-1 border-b border-gray-500">
+                <label className="mr-2 font-bold p-1 text-white">{month}:</label>
+                <p className="bg-gray-500 rounded ml-4 p-1">
+                  {monthAttendanceLogs[month]}
+                </p>
+              </div>
+            </div>
+          ))}
+        </div>
+        <button
+          className="rounded px-2 py-1 bg-blue-600 hover:bg-blue-800 ml-4 mt-8"
+          onClick={closeAttendanceLogsModal}
+        >
+          close
+        </button>
+      </div>
+    </div>
+  </div>
+)}
+
+
+              <div className="mt-9 relative top-[85px] right-[50px]">
+                <button
+                  className="bg-red-700 mt p-2 rounded-xl text-white"
+                  onClick={closeModal}
+                >
+                  close
+                </button>
+              </div>
             </div>
           </div>
         </div>
       )}
     </div>
   );
-}  
+}
