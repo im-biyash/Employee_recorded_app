@@ -360,39 +360,6 @@ app.get("/totalMonthAttendance/:id", (req, res) => {
     }
   );
 });
-app.get("/monthAttendanceLogs/:id", async (req, res) => {
-  try {
-    // Query to get the total attendance for each month
-    const totalMonthAttendanceQuery =
-      "SELECT COUNT(*) as totalDaysPresent, MONTH(attendance_date) as month " +
-      "FROM attendance " +
-      "WHERE status = 'Yes' AND YEAR(attendance_date) = YEAR(CURRENT_DATE()) " +
-      "AND employee_id = ? " +
-      "GROUP BY MONTH(attendance_date)";
-      
-    // Execute the SQL query
-    const result =  db.query(totalMonthAttendanceQuery, [req.params.id]);
-
-    // Check if result is an array
-    if (Array.isArray(result)) {
-      // Send the total days present for each month to the client
-      res.json(result);
-    } else {
-      // Handle cases where result is not in the expected format
-      console.error("Unexpected format of database result:", result);
-      res.status(500).json({
-        error: "Unexpected format of database result.",
-      });
-    }
-  } catch (err) {
-    console.error("Error fetching total month attendance:", err.message);
-    res.status(500).json({
-      error: "An error occurred while fetching total month attendance.",
-    });
-  }
-});
-
-
 
 
 app.get("/getTotalPresentToday", (req, res) => {
@@ -436,40 +403,38 @@ app.get("/getTotalAbsentToday", (req, res) => {
     res.json(result[0]);
   });
 });
-app.get("/monthAttendanceLogs/:employeeId", (req, res) => {
-  const employeeId = req.params.employeeId;
-
-  // Get the first day and last day of the current month
-  const firstDayOfMonth = format(new Date(), "yyyy-MM-01");
-  const lastDayOfMonth =
-    format(new Date(), "yyyy-MM-") +
-    new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0).getDate();
-
-  // Query to get the month-wise attendance logs for the given employee
-  const monthAttendanceLogsQuery =
-    "SELECT DATE_FORMAT(attendance_date, '%b') as month, COUNT(*) as count FROM attendance WHERE status = 'Yes' AND DATE(attendance_date) between ? and ? AND employee_id = ? GROUP BY month";
-
-  db.query(
-    monthAttendanceLogsQuery,
-    [firstDayOfMonth, lastDayOfMonth, employeeId],
-    (err, result) => {
-      if (err) {
-        console.error(err);
-        return res.status(500).json({
-          error: "An error occurred while fetching month-wise attendance logs.",
-        });
-      }
-
-      // Create a map to store month-wise attendance logs
-      const monthLogs = {};
-      result.forEach((row) => {
-        monthLogs[row.month] = row.count;
+app.get("/monthAttendanceLogs/:id", async (req, res) => {
+  try {
+    // Query to get the total attendance for each month
+    const totalMonthAttendanceQuery =
+      "SELECT MONTH(attendance_date) as month, COUNT(*) as totalDaysPresent " +
+      "FROM attendance " +
+      "WHERE status = 'Yes' AND YEAR(attendance_date) = YEAR(CURRENT_DATE()) " +
+      "AND employee_id = ? " +
+      "GROUP BY MONTH(attendance_date)";
+      
+    // Execute the SQL query
+    const result = await new Promise((resolve, reject) => {
+      db.query(totalMonthAttendanceQuery, [req.params.id], (err, rows) => {
+        if (err) {
+          // Log the error
+          console.error("Error executing SQL query:", err);
+          reject(err);
+        } else {
+          resolve(rows);
+        }
       });
+    });
 
-      // Send the month-wise attendance logs to the client
-      res.json(monthLogs);
-    }
-  );
+    // Send the result to the client
+    res.json(result);
+  } catch (err) {
+    // Handle errors and send an error response
+    console.error("Error fetching total month attendance:", err);
+    res.status(500).json({
+      error: "An error occurred while fetching total month attendance.",
+    });
+  }
 });
 
 

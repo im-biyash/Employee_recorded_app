@@ -7,7 +7,20 @@ export default function Employees() {
   const monthsArray = [
     "January",
     "February",
-    "March",]
+    "March",
+    "April",
+    "May",
+    "June",
+    "July",
+    "August",
+    "September",
+    "October",
+    "November",
+    "December",
+];
+const currentDate = new Date();
+const currentMonth = currentDate.getMonth();
+
   const [employeeList, setEmployeeList] = useState([]);
   const [searchInput, setSearchInput] = useState("");
   const [sortingOption, setSortingOption] = useState("name"); // Set default sorting to "name"
@@ -115,8 +128,13 @@ export default function Employees() {
 
   const fetchMonthAttendanceLogs = async () => {
     try {
+      console.log("Fetching month-wise attendance logs...");
       const monthLogsResponse = await axios.get(
         `http://localhost:3001/monthAttendanceLogs/${selectedEmployee.id}`
+      );
+      console.log(
+        "Month-wise attendance logs fetched:",
+        monthLogsResponse.data
       );
       setMonthAttendanceLogs(monthLogsResponse.data);
     } catch (error) {
@@ -126,10 +144,8 @@ export default function Employees() {
     }
   };
 
-  
-
   const handleOpen = async () => {
-    console.log("button clicked");
+    console.log("Opening attendance logs modal...");
     try {
       setIsAttendanceLogsModalOpen(true);
       console.log("Attendance logs modal open:", setIsAttendanceLogsModalOpen);
@@ -375,7 +391,7 @@ export default function Employees() {
                     <div className="p-3 mb-9 text-white font-serif text-left w-[50%] mt-4">
                       <h1 className="text-white text-2xl p-2 ml-3 mt-9 text-center relative bottom-[190px]">
                         Attendance Logs {/* Corrected header */}
-                      {/* </h1>
+              {/* </h1>
                       {Object.keys(monthAttendanceLogs).map((month, index) => (
                         <div
                           key={index}
@@ -399,38 +415,67 @@ export default function Employees() {
                   </div>
                 </div>
               )} */}
+              {attendanceLogsModelOpen && (
+                <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex justify-center items-center">
+                  <div className="bg-s p-4 rounded-lg w-1/2 h-[500px] flex items-center bg-[#0a192f] gap-28">
+                    <div className="p-3 mb-9 text-white font-serif text-left w-[100%] mt-4">
+                      <span className="text-white text-3xl bg-gray-400 rounded p-2 ml-3 mt-9 text-center relative bottom-[50px] hr right-12">
+                        Attendance Logs
+                      </span>
+                      <div className="flex flex-wrap w-full justify-between">
+                        {" "}
+                        {/* Ensure the flexbox takes full width and justify between */}
+                        {monthsArray.map((month, index) => {
+                          let totalDaysPresent = 0; // Define totalDaysPresent variable outside of the conditional
 
+                          // Check if monthAttendanceLogs is an array
+                          if (Array.isArray(monthAttendanceLogs)) {
+                            // If it's an array, find the log for the current month
+                            const monthLog = monthAttendanceLogs.find(
+                              (log) => log.month === index + 1
+                            );
+                            // Set totalDaysPresent to 0 if the log is not found, otherwise set it to the found log's totalDaysPresent
+                            totalDaysPresent = monthLog
+                              ? monthLog.totalDaysPresent
+                              : 0;
+                          }
 
-{attendanceLogsModelOpen && (
-  <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex justify-center items-center">
-    <div className="bg-s p-4 rounded-lg w-1/2 h-[500px] flex items-center bg-[#0a192f] gap-28">
-      <div className="p-3 mb-9 text-white font-serif text-left w-[50%] mt-4">
-        <h1 className="text-white text-2xl p-2 ml-3 mt-9 text-center relative bottom-[190px]">
-          Attendance Logs
-        </h1>
-        <div className="flex flex-wrap">
-          {monthsArray.map((month, index) => (
-            <div key={index} className="w-1/2">
-              <div className="flex p-1 border-b border-gray-500">
-                <label className="mr-2 font-bold p-1 text-white">{month}:</label>
-                <p className="bg-gray-500 rounded ml-4 p-1">
-                  {monthAttendanceLogs[month]}
-                </p>
-              </div>
-            </div>
-          ))}
-        </div>
-        <button
-          className="rounded px-2 py-1 bg-blue-600 hover:bg-blue-800 ml-4 mt-8"
-          onClick={closeAttendanceLogsModal}
-        >
-          close
-        </button>
-      </div>
-    </div>
-  </div>
-)}
-
+                          return (
+                            <div key={index} className="w-[50%] ">
+                              {" "}
+                              {/* Adjust width to fit two columns */}
+                              <div className="flex p-2 items-center">
+                                {" "}
+                                {/* Add 'items-center' to vertically center elements */}
+                                <label className="mr-2 font-bold text-white">
+                                  {month}:
+                                </label>{" "}
+                                {/* Remove 'p-1' from label */}
+                                <p className="text-xl font-bold p-1 ">
+                                  {totalDaysPresent}
+                                  {
+                                    // display cuurentMOnth if it is current month
+                                    index  === currentMonth
+                                      ? " (Current Month)"
+                                      : ""
+                                  }
+                                </p>{" "}
+                               
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </div>
+                      <button
+                        className="rounded px-2 py-1 bg-blue-600 hover:bg-blue-800 ml-4 mt-8"
+                        onClick={closeAttendanceLogsModal}
+                      >
+                        close
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              )}
 
               <div className="mt-9 relative top-[85px] right-[50px]">
                 <button
