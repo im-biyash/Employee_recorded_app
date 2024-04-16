@@ -88,7 +88,7 @@ const SpecificEmployeePage = () => {
         // Handle the failure, display an error message, etc.
       }
     } catch (error) {
-      console.error("Error while marking attendance:", error);
+      console.error("Error while marking the  attendance:", error);
       // Handle error appropriately
     }
   };
