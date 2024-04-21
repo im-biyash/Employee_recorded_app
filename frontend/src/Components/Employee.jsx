@@ -404,7 +404,7 @@ const currentMonth = currentDate.getMonth();
               </div>
               <div>
                 <button
-                  className="mt-9 p-3 my-2 mx-3 bg-green-400"
+                  className="mt-9 p-2 my-2 mx-3 bg-green-400 rounded text-black text-bold text-lg"
                   onClick={handleOpen}
                 >
                   View attendance
@@ -474,7 +474,7 @@ const currentMonth = currentDate.getMonth();
                 </div>
               )}
 
-              <div className="mt-9 relative top-[85px] right-[50px]">
+              <div className="mt-4 mr-8">
                 <button
                   className="bg-red-700 mt p-2 rounded-xl text-white"
                   onClick={closeModal}
