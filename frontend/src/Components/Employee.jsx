@@ -324,7 +324,7 @@ const currentMonth = currentDate.getMonth();
 
       {isModalOpen && selectedEmployee && (
         <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex justify-center items-center">
-          <div className="bg-s p-4 rounded-lg w-1/2 h-[500px] flex items-center bg-[#0a192f] gap-28">
+          <div className="bg-s p-4 rounded-lg w-1/2 h-[600px] flex items-center bg-[#0a192f] gap-28">
             {selectedEmployee.photo && (
               <div>
                 <img
@@ -337,7 +337,7 @@ const currentMonth = currentDate.getMonth();
                 </h1>
               </div>
             )}
-            <div className="p-3 mb-9 text-white font-serif text-left w-[50%]">
+            <div className="p-2 mt-4  text-white font-serif text-left w-[50%]">
               {selectedEmployee.name && (
                 <div className="flex mb-3 p-1 border-b border-gray-500">
                   <label className="mr-2 font-bold p-1">Name:</label>
@@ -346,13 +346,39 @@ const currentMonth = currentDate.getMonth();
                   </p>
                 </div>
               )}
+               {selectedEmployee.id && (
+                <div className="flex mb-3 p-2 border-b border-gray-500">
+                  <label className="mr-2 font-bold p-1">EmployeeID:</label>
+                  <p className=" rounded ml-4 p-1">
+                    {selectedEmployee.id}
+                  </p>
+                </div>
+              )}
               {selectedEmployee.email && (
-                <div className="flex mb-3 p-1 border-b border-gray-500">
+                <div className="flex mb-3 p-2 border-b border-gray-500">
                   <label className="mr-2 font-bold">Email:</label>
                   <p>{selectedEmployee.email}</p>
                 </div>
               )}
-              <div className="flex mb-3 p-1 border-b border-gray-500">
+              {selectedEmployee.post && (
+                <div className="flex mb-3 p-2 border-b border-gray-500">
+                  <label className="mr-2 font-bold">Post:</label>
+                  <p>{selectedEmployee.post}</p>
+                </div>
+              )}
+               {selectedEmployee.position && (
+                <div className="flex mb-3 p-2 border-b border-gray-500">
+                  <label className="mr-2 font-bold">Position:</label>
+                  <p>{selectedEmployee.position}</p>
+                </div>
+              )}
+                {selectedEmployee.wage && (
+                <div className="flex mb-3 p-2 border-b border-gray-500">
+                  <label className="mr-2 font-bold">Wage:</label>
+                  <p>{selectedEmployee.wage}</p>
+                </div>
+              )}
+              <div className="flex mb-3 p-2 border-b border-gray-500">
                 <label className="mr-2 font-bold">Todays attendance</label>
                 {selectedEmployee.status === "Yes" ? (
                   <div className="flex items-center">
@@ -385,36 +411,7 @@ const currentMonth = currentDate.getMonth();
                 </button>
               </div>
 
-              {/* {attendanceLogsModelOpen && (
-                <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex justify-center items-center">
-                  <div className="bg-s p-4 rounded-lg w-1/2 h-[500px] flex items-center bg-[#0a192f] gap-28">
-                    <div className="p-3 mb-9 text-white font-serif text-left w-[50%] mt-4">
-                      <h1 className="text-white text-2xl p-2 ml-3 mt-9 text-center relative bottom-[190px]">
-                        Attendance Logs {/* Corrected header */}
-              {/* </h1>
-                      {Object.keys(monthAttendanceLogs).map((month, index) => (
-                        <div
-                          key={index}
-                          className="flex p-1 border-b border-gray-500"
-                        >
-                          <label className="mr-2 font-bold p-1 text-white">
-                            {month}:
-                          </label>
-                          <p className="bg-gray-500 rounded ml-4 p-1">
-                            {monthAttendanceLogs[month]}
-                          </p>
-                        </div>
-                      ))}
-                      <button
-                        className="rounded px-2 py-1 bg-blue-600 hover:bg-blue-800 ml-4 mt-8"
-                        onClick={closeAttendanceLogsModal}
-                      >
-                        close
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              )} */}
+             
               {attendanceLogsModelOpen && (
                 <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex justify-center items-center">
                   <div className="bg-s p-4 rounded-lg w-1/2 h-[500px] flex items-center bg-[#0a192f] gap-28">
