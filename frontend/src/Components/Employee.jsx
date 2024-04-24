@@ -416,10 +416,10 @@ const currentMonth = currentDate.getMonth();
                 <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex justify-center items-center">
                   <div className="bg-s p-4 rounded-lg w-1/2 h-[500px] flex items-center bg-[#0a192f] gap-28">
                     <div className="p-3 mb-9 text-white font-serif text-left w-[100%] mt-4">
-                      <span className="text-white text-3xl bg-gray-400 rounded p-2 ml-3 mt-9 text-center relative bottom-[50px] hr right-12">
+                      <span className="text-white text-2xl bg-gray-400 rounded p-2 mx-auto">
                         Attendance Logs
                       </span>
-                      <div className="flex flex-wrap w-full justify-between">
+                      <div className="flex flex-wrap w-full justify-between font-mono text-xl">
                         {" "}
                         {/* Ensure the flexbox takes full width and justify between */}
                         {monthsArray.map((month, index) => {

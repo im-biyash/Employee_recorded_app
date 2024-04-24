@@ -45,7 +45,10 @@ const SpecificEmployeePage = () => {
     const checkLastAttendanceTime = () => {
       const currentTime = new Date();
 
-      if (lastAttendanceTime && (currentTime - new Date(lastAttendanceTime) < (24 * 60 * 60 * 1000))) {
+      if (
+        lastAttendanceTime &&
+        currentTime - new Date(lastAttendanceTime) < 24 * 60 * 60 * 1000
+      ) {
         setIsButtonDisabled(true);
         console.log("heello");
       } else {
@@ -83,12 +86,21 @@ const SpecificEmployeePage = () => {
         setLastAttendanceTime(currentTime);
         // Disable the button
         setIsButtonDisabled(true);
+      } else if (res.data.message === "Attendance already marked for today") {
+        const lastAttendanceTime = new Date(res.data.lastAttendanceTime);
+        if (currentTime - lastAttendanceTime < 24 * 60 * 60 * 1000) {
+          console.log("Attendance already marked within the last 24 hours.");
+          // Disable the button
+          setIsButtonDisabled(true);
+        } else {
+          // Handle the case where attendance was marked more than 24 hours ago
+        }
       } else {
         console.error("Failed to mark attendance:", res.data.message);
         // Handle the failure, display an error message, etc.
       }
     } catch (error) {
-      console.error("Error while marking the  attendance:", error);
+      console.error("Error while marking attendance:", error);
       // Handle error appropriately
     }
   };
@@ -174,19 +186,13 @@ const SpecificEmployeePage = () => {
                 </p>
               </>
             ) : (
-              <>
-                <button
-                  className={`${
-                    isButtonDisabled ? "bg-gray-400" : "bg-green-400"
-                  } text-black mt-2 rounded-lg p-1`}
-                  onClick={() => handleAttendance(id)}
-                  disabled={isButtonDisabled} // add the disabled attribute to prevent clicks
-                >
-                  Mark Present
-                </button>
-
-                <p className="text-lg mt-2">You can mark attendance today</p>
-              </>
+              <button
+                className="bg-green-400 text-black mt-2 rounded-lg p-1"
+                onClick={() => handleAttendance(id)}
+                disabled={isButtonDisabled}
+              >
+                Mark Present
+              </button>
             )}
           </div>
         </div>

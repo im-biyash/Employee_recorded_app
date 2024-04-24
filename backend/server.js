@@ -302,7 +302,9 @@ app.post("/markAttendance/:id", (req, res) => {
 
     // If attendance for the current date already exists, send a message
     if (result.length > 0) {
-      return res.json({ message: "Attendance already marked for today" });
+      // Get the last attendance time
+      const lastAttendanceTime = result[0].attendance_date;
+      return res.json({ message: "Attendance already marked for today", lastAttendanceTime });
     }
 
     // Check if the current time is past midnight (beginning of the next day)
