@@ -2,11 +2,11 @@ import React, { useEffect, useState } from "react";
 import EmployeePieChart from "./Employeepiechart";
 import Navbar from "./Navbar";
 import Typed from "react-typed";
-
+import companyimage from "../Assets/company.jpeg";
 const Home = () => {
   const [chartData, setChartData] = useState([]);
   const [employeeList, setEmployeeList] = useState([]);
-  const [totalPresentToday, setTotalPresentToday] = useState(0);
+
   const [totalAbsentToday, setTotalAbsentToday] = useState(0);
   const [isModelopen,setIsmodelopen]=useState(false);
 
@@ -40,20 +40,7 @@ const openModel = ()=>{
       }
     };
 
-    const fetchTotalPresentToday = async () => {
-      try {
-        const result = await fetch(
-          "http://localhost:3001/getTotalPresentToday"
-        );
-        const data = await result.json();
-        setTotalPresentToday(data.totalEmployeesPresent);
-      } catch (error) {
-        console.error(
-          "Error fetching total present today data:",
-          error.message
-        );
-      }
-    };
+   
 
     const fetchTotalAbsentToday = async () => {
       try {
@@ -75,7 +62,7 @@ const openModel = ()=>{
     // ...
   fetchData();
   fetchEmployeeData();
-    fetchTotalPresentToday();
+
     fetchTotalAbsentToday();
   }, []);
 
@@ -88,7 +75,7 @@ const openModel = ()=>{
    
     <div className="bg-[#0a192f] h-screen text-white">
       <Navbar />
-      <h1 className="text-3xl font-bold mb-4 text-center">Biyash company</h1>
+      <h1 className="text-3xl font-bold mb-4 text-center">CodeNexa Innovations</h1>
 
       <Typed
         className="typed-text text-4xl text-white relative left-[600px] top-[0px]"
@@ -106,12 +93,7 @@ const openModel = ()=>{
           </h1>
         </div>
 
-        <div className="bg-slate-700 h-29 w-1/5 border-spacing-1 rounded-2xl">
-          <h1 className="text-3xl text-white font-bold ml-8 mt-600">
-            Present today :<br></br>
-            <span className="ml-28 text-green-500">{totalPresentToday}</span>
-          </h1>
-        </div>
+    
 
         <div className="bg-slate-700 h-29 w-1/5 border-spacing-1 rounded-2xl hover:bg-slate-300"onClick={openModel}>
           <h1 className="text-3xl text-white font-bold ml-8 mt-600">
@@ -120,25 +102,31 @@ const openModel = ()=>{
           </h1>
         </div>
       </div>
+       
+          <div className="flex gap-60 p-3">
 
-      <div className="about-chart flex-col gap-6 relative top-[200px] ">
+      <div className="about-chart flex- gap-6 relative top-[200px] ">
+        <h2 className="text-xl font-mono">Employee distribution by position</h2>
         <EmployeePieChart
           data={chartData}
           className="text-white p-2 relative top-[300px]"
         />
-        <h2>Employee distribution by position</h2>
       </div>
+      <div className="text-3xl font-bold mb-4 ">
+         <img src ={companyimage} alt="" className="w-[600px] h-[450px] ml-9 "/>
+        </div>
+</div>
 
       {isModelopen && (
   <div
-    className="bg-slate-700 h-1/2 w-1/2 text-white relative bottom-[250px] left-[350px]"
+    className="bg-slate-700 h-1/2 w-1/2 text-white relative bottom-[400px] left-[350px]"
     style={{ maxHeight: '80vh', overflowY: 'auto' }}
   >
     <h1 className="text-3xl font-bold mb-4 text-red-500">Absent today</h1>
     {employeeList.map((absentemployee) => (
       <div
         key={absentemployee.id}
-        className="bg-slate-700 text-white mb-2 p-4 rounded max-w-full"
+        className="bg-slate-700 text-white mb-2 p-2 rounded max-w-full mb-"
       >
             <div className="items flex gap-2 items-center text-xl">
               <img
