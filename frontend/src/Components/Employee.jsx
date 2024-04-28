@@ -96,6 +96,9 @@ const currentMonth = currentDate.getMonth();
       console.error("Error deleting employee: " + error.message);
     }
   };
+  const handleDownload = () =>{
+    window.print();
+  }
   const closeModal = () => {
     setIsModalOpen(false);
   };
@@ -217,7 +220,8 @@ const currentMonth = currentDate.getMonth();
           </div>
 
           <div className="buttons p-3 mr-4 px-2 ">
-            <button className=" border-2 rounded-2xl p-2 bg-green-400">
+            <button className=" border-2 rounded-2xl p-2 bg-green-400" onClick ={handleDownload}>
+            
               Download
             </button>
           </div>

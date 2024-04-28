@@ -73,7 +73,7 @@ const openModel = ()=>{
 
   return (
    
-    <div className="bg-[#0a192f] h-screen text-white">
+    <div className="bg-[#0a192f] h-[100vh] text-white">
       <Navbar />
       <h1 className="text-3xl font-bold mb-4 text-center">CodeNexa Innovations</h1>
 
@@ -105,15 +105,16 @@ const openModel = ()=>{
        
           <div className="flex gap-60 p-3">
 
-      <div className="about-chart flex- gap-6 relative top-[200px] ">
+      <div className="about-chart flex- gap-6 relative top-[170px] ">
         <h2 className="text-xl font-mono">Employee distribution by position</h2>
         <EmployeePieChart
           data={chartData}
-          className="text-white p-2 relative top-[300px]"
+          className="text-white p-2 relative top-[280px]"
         />
       </div>
-      <div className="text-3xl font-bold mb-4 ">
-         <img src ={companyimage} alt="" className="w-[600px] h-[450px] ml-9 "/>
+      <div className="text-3xl font-bold mb-4  ">
+    
+         <img src ={companyimage} alt="" className="w-[600px] h-[480px] relative left-[200px] "/>
         </div>
 </div>
 
@@ -147,9 +148,7 @@ const openModel = ()=>{
           Close
         </button>
       </div>
-    )}
-
-      
+    )}  
     </div>
   );
 };

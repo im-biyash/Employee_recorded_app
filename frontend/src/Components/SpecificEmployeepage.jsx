@@ -41,23 +41,23 @@ const SpecificEmployeePage = () => {
 
     fetchTotalMonthAttendance();
   }, [id]);
-  useEffect(() => {
-    const checkLastAttendanceTime = () => {
-      const currentTime = new Date();
+  // useEffect(() => {
+  // //   const checkLastAttendanceTime = () => {
+  // //     const currentTime = new Date();
 
-      if (
-        lastAttendanceTime &&
-        currentTime - new Date(lastAttendanceTime) < 24 * 60 * 60 * 1000
-      ) {
-        setIsButtonDisabled(true);
-        console.log("heello");
-      } else {
-        setIsButtonDisabled(false);
-      }
-    };
+  // //     if (
+  // //       lastAttendanceTime &&
+  // //       currentTime - new Date(lastAttendanceTime) < 24 * 60 * 60 * 1000
+  // //     ) {
+  // //       setIsButtonDisabled(true);
+        
+  // //     } else {
+  // //       setIsButtonDisabled(false);
+  // //     }
+  // //   };
 
-    checkLastAttendanceTime();
-  }, [lastAttendanceTime]);
+  // //   checkLastAttendanceTime();
+  // // }, [lastAttendanceTime]);
 
   const handleAttendance = async (id) => {
     try {
