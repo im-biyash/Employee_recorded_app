@@ -1,5 +1,5 @@
 const express = require("express");
-const mysql = require("mysql"); // Import the mysql package
+const mysql = require("mysql");
 const app = express();
 const cors = require("cors");
 const multer = require("multer");
