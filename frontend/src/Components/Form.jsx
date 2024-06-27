@@ -4,8 +4,6 @@
 import React, { useState } from "react";
 import axios from "axios";
 import Navbar from "./Navbar";
-
-import { useNavigate } from "react-router-dom";
 export default function Form() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");

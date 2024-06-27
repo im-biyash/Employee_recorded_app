@@ -63,6 +63,7 @@ app.post("/employeeLogin", (req, res) => {
       // No matching employee found
       return res.send("failed");
     }
+    
   });
 });
 
@@ -364,26 +365,6 @@ app.get("/totalMonthAttendance/:id", (req, res) => {
 });
 
 
-app.get("/getTotalPresentToday", (req, res) => {
-  // Get the current date
-  const currentDateTime = format(new Date(), "yyyy-MM-dd");
-
-  // Query to get the total number of employees present today
-  const totalPresentTodayQuery =
-    "SELECT COUNT(DISTINCT employee_id) as totalEmployeesPresent FROM attendance WHERE status = 'Yes' AND DATE(attendance_date) = ?";
-console.log(totalPresentTodayQuery);
-  db.query(totalPresentTodayQuery, [currentDateTime], (err, result) => {
-    if (err) {
-      console.error(err);
-      return res.status(500).json({
-        error: "An error occurred while fetching total present today data.",
-      });
-    }
-
-    // Send the total employees present today to the client
-    res.json(result[0]);
-  });
-});
 
 app.get("/getTotalAbsentToday", (req, res) => {
   // Get the current date
