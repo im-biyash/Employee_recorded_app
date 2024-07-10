@@ -172,7 +172,7 @@ const currentMonth = currentDate.getMonth();
 
       <div className="bg-[#0a192f]">
         <div className="flex items-center justify-between print:hidden bg-[#0a192f]">
-          <h1 className="text-2xl text-white font-bold mb-4 mx-auto ml-8">
+          <h1 className="text-2xl text-white font-bold mb-3 mx-auto ml-6">
             Employee List
           </h1>
 
